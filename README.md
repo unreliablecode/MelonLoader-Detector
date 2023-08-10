@@ -1,4 +1,4 @@
-# MelonLoader Detector
+# ModLoader Detector
 
 [![GitHub License](https://img.shields.io/github/license/unreliablecode/MelonLoader-Detector)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/unreliablecode/MelonLoader-Detector)](https://github.com/unreliablecode/MelonLoader-Detector/stargazers)
