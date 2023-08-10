@@ -1,7 +1,8 @@
 using System;
+using System.Collections;
+using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using System.IO;
 
 public class ModLoaderDetector : MonoBehaviour
 {
@@ -11,34 +12,31 @@ public class ModLoaderDetector : MonoBehaviour
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern IntPtr GetModuleHandle(string lpModuleName);
 
+    private WaitForSeconds checkInterval = new WaitForSeconds(5.0f); // Check every 5 seconds
+
     private void Start()
     {
-        StartCoroutine(CheckForModLoaders());
+        StartCoroutine(CheckForModLoadersContinuously());
     }
 
-    private System.Collections.IEnumerator CheckForModLoaders()
+    private IEnumerator CheckForModLoadersContinuously()
     {
-        foreach (string moduleName in moduleNames)
+        while (true)
         {
-            if (IsModuleLoaded(moduleName))
-            {
-                Debug.Log($"{moduleName} is loaded. Exiting application...");
-                Application.Quit();
-                yield break;
-            }
-        }
+            CheckForModLoaders();
 
-        foreach (string folderName in folderNames)
+            // Wait for the specified interval before checking again
+            yield return checkInterval;
+        }
+    }
+
+    private void CheckForModLoaders()
+    {
+        if (IsAnyModuleLoaded() || AreAnyFoldersPresent())
         {
-            if (Directory.Exists(folderName))
-            {
-                Debug.Log($"{folderName} folder is present. Exiting application...");
-                Application.Quit();
-                yield break;
-            }
+            Debug.Log("Mod loader or folder detected. Exiting application...");
+            Application.Quit();
         }
-
-        // No mod loaders or folders detected, continue with the game
     }
 
     private bool IsModuleLoaded(string moduleName)
@@ -47,9 +45,27 @@ public class ModLoaderDetector : MonoBehaviour
         return moduleHandle != IntPtr.Zero;
     }
 
-    private void Update()
+    private bool IsAnyModuleLoaded()
     {
-        // You can add any required update logic here
-        StartCoroutine(CheckForModLoaders());
+        foreach (string moduleName in moduleNames)
+        {
+            if (IsModuleLoaded(moduleName))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool AreAnyFoldersPresent()
+    {
+        foreach (string folderName in folderNames)
+        {
+            if (Directory.Exists(folderName))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
