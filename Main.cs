@@ -13,22 +13,18 @@ public class ModLoaderDetector : MonoBehaviour
 
     private void Start()
     {
-        // Initial check for mod loaders
-        CheckForModLoaders();
+        StartCoroutine(CheckForModLoaders());
     }
 
-    private void CheckForModLoaders()
+    private System.Collections.IEnumerator CheckForModLoaders()
     {
-        bool modLoaded = false;
-        bool folderPresent = false;
-
         foreach (string moduleName in moduleNames)
         {
             if (IsModuleLoaded(moduleName))
             {
-                Debug.Log($"{moduleName} is loaded.");
-                modLoaded = true;
-                break;
+                Debug.Log($"{moduleName} is loaded. Exiting application...");
+                Application.Quit();
+                yield break;
             }
         }
 
@@ -36,17 +32,13 @@ public class ModLoaderDetector : MonoBehaviour
         {
             if (Directory.Exists(folderName))
             {
-                Debug.Log($"{folderName} folder is present.");
-                folderPresent = true;
-                break;
+                Debug.Log($"{folderName} folder is present. Exiting application...");
+                Application.Quit();
+                yield break;
             }
         }
 
-        if (modLoaded || folderPresent)
-        {
-            Debug.Log("Exiting application...");
-            Application.Quit();
-        }
+        // No mod loaders or folders detected, continue with the game
     }
 
     private bool IsModuleLoaded(string moduleName)
@@ -57,7 +49,7 @@ public class ModLoaderDetector : MonoBehaviour
 
     private void Update()
     {
-        // Check for mod loaders and folders
-        CheckForModLoaders();
+        // You can add any required update logic here
+        StartCoroutine(CheckForModLoaders());
     }
 }
