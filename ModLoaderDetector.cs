@@ -32,7 +32,7 @@ public class ModLoaderDetector : MonoBehaviour
 
     private void CheckForModLoaders()
     {
-        if (IsAnyModuleLoaded() || AreAnyFoldersPresent())
+        if (IsAnyModuleLoaded() || AreAnyFoldersPresent() || ApplicationDataPathContainsMods())
         {
             Debug.Log("Mod loader or folder detected. Exiting application...");
             Application.Quit();
@@ -67,5 +67,11 @@ public class ModLoaderDetector : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private bool ApplicationDataPathContainsMods()
+    {
+        string dataPath = Application.dataPath;
+        return dataPath.Contains("MelonLoader") || dataPath.Contains("BepInEx");
     }
 }
